@@ -30,7 +30,6 @@ No image data ever leaves your browser during this process.
 
 - **contextMenus**: Adds the "Save Image As…" option to your right-click menu
 - **downloads**: Triggers the browser's save dialog with the converted image
-- **activeTab**: Allows the extension to access the image on the current page when you right-click it
 
 ## Third-Party Services
 

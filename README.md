@@ -9,8 +9,8 @@ A lightweight Chrome/Brave extension that lets you right-click any image and sav
 | PNG | Yes | Lossless |
 | JPEG | No (white fill) | Compressed, 92% quality |
 | WebP | Yes | Modern format, small files |
-| BMP | Yes | Uncompressed bitmap |
-| GIF | Yes | Classic web format |
+| BMP | No (white fill) | Uncompressed bitmap |
+| GIF | No (white fill) | Classic web format |
 
 Works with **all source image types** including WebP, AVIF, SVG, PNG, JPEG, GIF, BMP, and TIFF.
 
@@ -46,8 +46,6 @@ All image conversion happens **100% locally** in your browser. No data is collec
 |---|---|
 | `contextMenus` | Adds the right-click menu options |
 | `downloads` | Opens the browser save dialog |
-| `activeTab` | Accesses the image on the current page |
-| `scripting` | Runs the canvas conversion in the active tab |
 
 ## License
 
