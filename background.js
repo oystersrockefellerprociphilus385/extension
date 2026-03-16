@@ -30,14 +30,26 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if (!format) return;
 
   try {
-    // Fetch image in background (no CORS restrictions here)
-    const response = await fetch(info.srcUrl);
-    const blob = await response.blob();
+    // Inject content script to fetch image from the page context (same-origin)
+    // activeTab permission is granted because the user performed a gesture (right-click)
+    const results = await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      args: [info.srcUrl],
+      func: fetchImageAsDataUrl,
+    });
 
-    // Decode image using createImageBitmap (available in service workers)
+    const imageDataUrl = results?.[0]?.result;
+    if (!imageDataUrl) {
+      console.error("Save As Image Type: failed to fetch image from page");
+      return;
+    }
+
+    // Convert data URL to blob in the service worker
+    const fetchResponse = await fetch(imageDataUrl);
+    const blob = await fetchResponse.blob();
+
+    // Decode and convert using OffscreenCanvas
     const bitmap = await createImageBitmap(blob);
-
-    // Use OffscreenCanvas (available in service workers, no DOM needed)
     const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
     const ctx = canvas.getContext("2d");
 
@@ -52,8 +64,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     ctx.drawImage(bitmap, 0, 0);
     bitmap.close();
 
-    // OffscreenCanvas.convertToBlob supports fewer types than toDataURL
-    // Supported: image/png, image/jpeg, image/webp
+    // OffscreenCanvas.convertToBlob supports: image/png, image/jpeg, image/webp
     let outputMime = format.mimeType;
     if (outputMime === "image/gif" || outputMime === "image/bmp") {
       outputMime = "image/png";
@@ -67,7 +78,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       quality,
     });
 
-    // Convert blob to data URL (FileReader not available in service workers)
+    // Convert to data URL for chrome.downloads
     const arrayBuffer = await outputBlob.arrayBuffer();
     const base64 = btoa(
       new Uint8Array(arrayBuffer).reduce(
@@ -97,3 +108,33 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     console.error("Save As Image Type error:", err);
   }
 });
+
+// This function runs in the page context via content script injection.
+// It fetches the image as a blob (same-origin, no CORS issues) and
+// returns it as a data URL to the background script.
+function fetchImageAsDataUrl(srcUrl) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      resolve(canvas.toDataURL("image/png"));
+    };
+    img.onerror = () => {
+      // Fallback: fetch as blob directly
+      fetch(srcUrl)
+        .then((r) => r.blob())
+        .then((blob) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsDataURL(blob);
+        })
+        .catch(() => resolve(null));
+    };
+    img.src = srcUrl;
+  });
+}
